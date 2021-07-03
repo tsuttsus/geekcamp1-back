@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>RanzeDaze!!</title>
+  </head>
+  <body>
+    <h1 style="text-align:center">顔認識をして寺田蘭世かどうかを識別</h1>
+    <form style="text-align: center;" enctype="multipart/form-data">
+      <input type="file" name="img">
+      <button type="submit" formmethod="post">POST</button></p>
+      {% if img_path %}
+      <div>
+        <img src="{{ img_path }}" style="width: 200px;">
+      </div>
+      <p>{{ img_path }}</p>
+      {% endif %}
+    </form>
+    <div style="text-align: center;">
+        <h3>精度は悪いです。ごめんなさい。精度を上げていきたい</h3>
+        <h3 >参考サイト</h3>
+        <p><a href="https://blog.nogizaka46.com/ranze.terada/">寺田蘭世　乃木坂46 ブログ</a></p>
+        <h5>作者コメント</h5>
+        <p>最近、公式ブログのサムネ画像が変わりましたね...!かわいい!!!<br>2021/07/04<br>作者Twitter:@beta3desuyo</p>
+        <h4>おまけ:成功例</h4>
+        <img src="../static/aaw.jpg">
+        <h4>おまけ:失敗例</h4>
+        <img src="../static/aaaaagh.jpg">
+        
+    </div>
+
+  </body>
+</html>
