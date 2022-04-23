@@ -5,6 +5,7 @@ import sys
 from tensorflow.keras.models import  load_model
 from flask import Flask, render_template, request
 import base64
+import json
 
 app = Flask(__name__)
 
@@ -40,11 +41,13 @@ def hello_world():
                 img = cv2.resize(image,(64,64))
                 img=np.expand_dims(img,axis=0)
                 name=""
-                model =load_model('ranze_model.h5')
+                model =load_model('my_model.h5')
                 print(model.predict(img))
                 nameNumLabel=np.argmax(model.predict(img))
                 if nameNumLabel== 0:
                     name="Ranze"
+                else:
+                    name="sonota"
                 cv2.putText(image,name,(x,y+height+20),cv2.FONT_HERSHEY_DUPLEX,1,(255,0,0),2)
         #顔が検出されなかった時
         else:
@@ -61,6 +64,7 @@ def hello_world():
         qr_b64data = "data:image/png;base64,{}".format(qr_b64str)
         return render_template('kekka.html',img = qr_b64data)
 
+@app.route('/', methods=["GET", "POST"])
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5050, debug=True)
