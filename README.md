@@ -1,5 +1,10 @@
 # RanzeDaze
 
+## 最新の状態する
+```
+git pull origin master
+```
+
 ## docker
 
 ```
