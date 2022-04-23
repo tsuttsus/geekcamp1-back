@@ -76,8 +76,8 @@ def test_api():
         cascade = cv2.CascadeClassifier("haarcascade_frontalface_alt.xml")
         # 顔認識の実行
         face_list=cascade.detectMultiScale(image_gs, scaleFactor=1.1, minNeighbors=2,minSize=(64,64))
-        #顔が１つ以上検出された時
-        if len(face_list) = 0:
+        #顔が１つ検出された時
+        if len(face_list) == 1:
             for rect in face_list:
                 x,y,width,height=rect
                 cv2.rectangle(image, tuple(rect[0:2]), tuple(rect[0:2]+rect[2:4]), (255, 0, 0), thickness=3)
