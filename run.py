@@ -3,8 +3,9 @@ import datetime
 import numpy as np
 import sys
 from tensorflow.keras.models import  load_model
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, abort, jsonify, make_response
 import base64
+import json
 
 app = Flask(__name__)
 
@@ -20,8 +21,6 @@ def hello_world():
         img_array = np.asarray(bytearray(stream.read()), dtype=np.uint8)
         image = cv2.imdecode(img_array, 1)
         ### 画像処理
-        if image is None:
-            print("Not open:")
         b,g,r = cv2.split(image)
         image = cv2.merge([r,g,b])
         image_gs = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -40,11 +39,13 @@ def hello_world():
                 img = cv2.resize(image,(64,64))
                 img=np.expand_dims(img,axis=0)
                 name=""
-                model =load_model('ranze_model.h5')
+                model =load_model('models/model1903.h5')
                 print(model.predict(img))
                 nameNumLabel=np.argmax(model.predict(img))
                 if nameNumLabel== 0:
                     name="Ranze"
+                else:
+                    name="sonota"
                 cv2.putText(image,name,(x,y+height+20),cv2.FONT_HERSHEY_DUPLEX,1,(255,0,0),2)
         #顔が検出されなかった時
         else:
@@ -61,8 +62,6 @@ def hello_world():
         qr_b64data = "data:image/png;base64,{}".format(qr_b64str)
         return render_template('kekka.html',img = qr_b64data)
 
-<<<<<<< Updated upstream
-=======
 @app.route('/test', methods=["POST"])
 def test_api():
     if request.method == 'POST':
@@ -129,7 +128,6 @@ def error_handler(error):
         'code': error.description['code'],
         'message': error.description['message']
     }}), error.code
->>>>>>> Stashed changes
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5050, debug=True)
