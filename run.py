@@ -61,6 +61,75 @@ def hello_world():
         qr_b64data = "data:image/png;base64,{}".format(qr_b64str)
         return render_template('kekka.html',img = qr_b64data)
 
+<<<<<<< Updated upstream
+=======
+@app.route('/test', methods=["POST"])
+def test_api():
+    if request.method == 'POST':
+        #### POSTにより受け取った画像を読み込む
+        stream = request.files.stream
+        img_array = np.asarray(bytearray(stream.read()), dtype=np.uint8)
+        image = cv2.imdecode(img_array, 1)
+        ### 画像処理
+        b,g,r = cv2.split(image)
+        image = cv2.merge([r,g,b])
+        image_gs = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        cascade = cv2.CascadeClassifier("haarcascade_frontalface_alt.xml")
+        # 顔認識の実行
+        face_list=cascade.detectMultiScale(image_gs, scaleFactor=1.1, minNeighbors=2,minSize=(64,64))
+        name_list = ['寺田蘭世', '金村美玖', '宮田愛萌', '山口陽世', '与田祐希', 'その他']
+        predict_value = [0]*5
+        nameNumLabel = 5
+        #顔が１つ検出された時
+        if len(face_list) == 1:
+            for rect in face_list:
+                x,y,width,height=rect
+                cv2.rectangle(image, tuple(rect[0:2]), tuple(rect[0:2]+rect[2:4]), (255, 0, 0), thickness=3)
+                img = image[rect[1]:rect[1]+rect[3],rect[0]:rect[0]+rect[2]]
+                if image.shape[0]<64:
+                    print("too small")
+                    continue
+                img = cv2.resize(image,(64,64))
+                img=np.expand_dims(img,axis=0)
+                name=""
+                model =load_model('models/model1903.h5')
+                print(model.predict(img))
+                nameNumLabel=np.argmax(model.predict(img))
+                predict_value = model.predict(img)
+                predict_value = list(predict_value[0])
+                if !(nameNumLabel >= 0 and nameNumLabel <=4):
+                    nameNumLabel = 5
+                cv2.putText(image,name,(x,y+height+20),cv2.FONT_HERSHEY_DUPLEX,1,(255,0,0),2)
+        #顔が複数検出されたとき
+        else:
+            print('no face')
+        
+        nameValue_dict = dict(zip(name_list[0:5], predict_value))
+        json_data = json.dumps({"face": len(face_list), "name": name_list[nameNumLabel], "value": predict_value[nameNumLabel], "name_value": nameValue_dict})
+        response = make_response(json_data)
+        response.headers["Content-type"] = "application/json"
+        response.headers["Access-Control-Allow-Origin"] = "*"
+        
+        return response
+
+@app.route('/hello')
+    json_data = json.dumps({"hello": "world"})
+    response = make_response(json_data)
+
+    return response
+
+# エラーのハンドリング errorhandler(xxx)を指定、複数指定可能
+# ここでは400,404をハンドリングする
+@app.errorhandler(400)
+@app.errorhandler(404)
+def error_handler(error):
+    # error.code: HTTPステータスコード
+    # error.description: abortで設定したdict型
+    return jsonify({'error': {
+        'code': error.description['code'],
+        'message': error.description['message']
+    }}), error.code
+>>>>>>> Stashed changes
 
 if __name__ == "__main__":
     app.run(debug=True)
