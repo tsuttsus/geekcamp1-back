@@ -3,8 +3,9 @@ import datetime
 import numpy as np
 import sys
 from tensorflow.keras.models import  load_model
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, abort, jsonify, make_response
 import base64
+import json
 
 app = Flask(__name__)
 
@@ -61,8 +62,6 @@ def hello_world():
         qr_b64data = "data:image/png;base64,{}".format(qr_b64str)
         return render_template('kekka.html',img = qr_b64data)
 
-<<<<<<< Updated upstream
-=======
 @app.route('/test', methods=["POST"])
 def test_api():
     if request.method == 'POST':
@@ -113,6 +112,7 @@ def test_api():
         return response
 
 @app.route('/hello')
+def hello():
     json_data = json.dumps({"hello": "world"})
     response = make_response(json_data)
 
@@ -129,7 +129,6 @@ def error_handler(error):
         'code': error.description['code'],
         'message': error.description['message']
     }}), error.code
->>>>>>> Stashed changes
 
 if __name__ == "__main__":
     app.run(debug=True)
