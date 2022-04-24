@@ -39,13 +39,11 @@ def hello_world():
                 img = cv2.resize(image,(64,64))
                 img=np.expand_dims(img,axis=0)
                 name=""
-                model =load_model('models/model1903.h5')
+                model =load_model('ranze_model.h5')
                 print(model.predict(img))
                 nameNumLabel=np.argmax(model.predict(img))
                 if nameNumLabel== 0:
                     name="Ranze"
-                else:
-                    name="sonota"
                 cv2.putText(image,name,(x,y+height+20),cv2.FONT_HERSHEY_DUPLEX,1,(255,0,0),2)
         #顔が検出されなかった時
         else:
@@ -76,6 +74,9 @@ def test_api():
         cascade = cv2.CascadeClassifier("haarcascade_frontalface_alt.xml")
         # 顔認識の実行
         face_list=cascade.detectMultiScale(image_gs, scaleFactor=1.1, minNeighbors=2,minSize=(64,64))
+        name_list = ['寺田蘭世', '金村美玖', '宮田愛萌', '山口陽世', '与田祐希', 'その他']
+        predict_value = [0]*5
+        nameNumLabel = 5
         #顔が１つ検出された時
         if len(face_list) == 1:
             for rect in face_list:
@@ -92,23 +93,24 @@ def test_api():
                 print(model.predict(img))
                 nameNumLabel=np.argmax(model.predict(img))
                 predict_value = model.predict(img)
-                if nameNumLabel== 0:
-                    name="Ranze"
-                else:
-                    name="sonota"
+                predict_value = list(predict_value[0])
+                if !(nameNumLabel >= 0 and nameNumLabel <=4):
+                    nameNumLabel = 5
                 cv2.putText(image,name,(x,y+height+20),cv2.FONT_HERSHEY_DUPLEX,1,(255,0,0),2)
-        #顔が検出されなかった時
+        #顔が複数検出されたとき
         else:
-            print("no face")
+            print('no face')
         
-        json_data = json.dumps({"face": len(face_list), "name": name})
+        nameValue_dict = dict(zip(name_list[0:5], predict_value))
+        json_data = json.dumps({"face": len(face_list), "name": name_list[nameNumLabel], "value": predict_value[nameNumLabel], "name_value": nameValue_dict})
         response = make_response(json_data)
-        # response.headers["Content-type"] = "application/json"
-        # response.headers["Access-Control-Allow-Origin"] = "*"
+        response.headers["Content-type"] = "application/json"
+        response.headers["Access-Control-Allow-Origin"] = "*"
         
         return response
 
 @app.route('/hello')
+def hello():
     json_data = json.dumps({"hello": "world"})
     response = make_response(json_data)
 
@@ -127,4 +129,4 @@ def error_handler(error):
     }}), error.code
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5050, debug=True)
+    app.run(debug=True)
