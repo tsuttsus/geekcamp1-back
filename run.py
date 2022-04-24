@@ -94,7 +94,7 @@ def test_api():
                 nameNumLabel=np.argmax(model.predict(img))
                 predict_value = model.predict(img)
                 predict_value = list(predict_value[0])
-                if !(nameNumLabel >= 0 and nameNumLabel <=4):
+                if ~(nameNumLabel >= 0 and nameNumLabel <=4):
                     nameNumLabel = 5
                 cv2.putText(image,name,(x,y+height+20),cv2.FONT_HERSHEY_DUPLEX,1,(255,0,0),2)
         #顔が複数検出されたとき
