@@ -64,7 +64,7 @@ def hello_world():
 def test_api():
     if request.method == 'POST':
         #### POSTにより受け取った画像を読み込む
-        stream = request.files.stream
+        stream = request.files['img'].stream
         img_array = np.asarray(bytearray(stream.read()), dtype=np.uint8)
         image = cv2.imdecode(img_array, 1)
         ### 画像処理
