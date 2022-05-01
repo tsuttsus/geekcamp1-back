@@ -116,17 +116,5 @@ def hello():
 
     return response
 
-# エラーのハンドリング errorhandler(xxx)を指定、複数指定可能
-# ここでは400,404をハンドリングする
-@app.errorhandler(400)
-@app.errorhandler(404)
-def error_handler(error):
-    # error.code: HTTPステータスコード
-    # error.description: abortで設定したdict型
-    return jsonify({'error': {
-        'code': error.description['code'],
-        'message': error.description['message']
-    }}), error.code
-
 if __name__ == "__main__":
     app.run(debug=True)
