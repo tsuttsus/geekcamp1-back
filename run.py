@@ -107,7 +107,6 @@ def test_api():
         elif len(face_list) == 0:
             #顔が検出されたなかった時の処理
             name_list[-1] = "顔が複数検出されませんでした"
-    "
         else:
             #顔が複数検出されたときの処理
             print('no face')
