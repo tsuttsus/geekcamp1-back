@@ -6,8 +6,15 @@ from tensorflow.keras.models import  load_model
 from flask import Flask, render_template, request, redirect, abort, jsonify, make_response
 import base64
 import json
+# from flask_cors import CORS
 
 app = Flask(__name__)
+# CORS(
+#     app,
+#     supports_credentials=True
+# )
+
+# @app.route('/')
 
 @app.route('/', methods=["GET", "POST"])
 def hello_world():
@@ -99,7 +106,7 @@ def test_api():
                 cv2.putText(image,name,(x,y+height+20),cv2.FONT_HERSHEY_DUPLEX,1,(255,0,0),2)
         elif len(face_list) == 0:
             #顔が検出されたなかった時の処理
-            name_list[-1] = "顔が複数検出されませんでした
+            name_list[-1] = "顔が複数検出されませんでした"
     "
         else:
             #顔が複数検出されたときの処理
