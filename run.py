@@ -97,9 +97,13 @@ def test_api():
                 if ~(nameNumLabel >= 0 and nameNumLabel <=4):
                     nameNumLabel = 5
                 cv2.putText(image,name,(x,y+height+20),cv2.FONT_HERSHEY_DUPLEX,1,(255,0,0),2)
-        #顔が複数検出されたとき
+        elif len(face_list) == 0:
+            #顔が検出されたなかった時の処理
+            name_list[-1] = "顔が複数検出されませんでした"
         else:
+            #顔が複数検出されたときの処理
             print('no face')
+            name_list[-1] = "顔が複数検出されました"
         
         nameValue_dict = dict(zip(name_list[0:5], predict_value))
         json_data = json.dumps({"face": len(face_list), "name": name_list[nameNumLabel]}, ensure_ascii=False)
@@ -107,6 +111,7 @@ def test_api():
         response = make_response(json_data)
         response.headers["Content-type"] = "application/json"
         response.headers["Access-Control-Allow-Origin"] = "*"
+        response.headers["Access-Control-Request-Method"] = "GET,POST,HEAD"
         
         return response
 
