@@ -81,7 +81,7 @@ def test_api():
         cascade = cv2.CascadeClassifier("haarcascade_frontalface_alt.xml")
         # 顔認識の実行
         face_list=cascade.detectMultiScale(image_gs, scaleFactor=1.1, minNeighbors=2,minSize=(64,64))
-        name_list = ['寺田蘭世', '金村美玖', '宮田愛萌', '山口陽世', '与田祐希', 'その他']
+        name_list = ['寺田蘭世', '金村美玖', '宮田愛萌', '山口陽世', '与田祐希', '影山優佳', '森田ひかる', '守屋麗奈', '齋藤飛鳥', 'その他']
         predict_value = [0]*5
         nameNumLabel = 5
         #顔が１つ検出された時
@@ -101,15 +101,15 @@ def test_api():
                 nameNumLabel=np.argmax(model.predict(img))
                 predict_value = model.predict(img)
                 predict_value = list(predict_value[0])
-                if ~(nameNumLabel >= 0 and nameNumLabel <=4):
-                    nameNumLabel = 5
                 cv2.putText(image,name,(x,y+height+20),cv2.FONT_HERSHEY_DUPLEX,1,(255,0,0),2)
         elif len(face_list) == 0:
             #顔が検出されたなかった時の処理
+            nameNumLabel = 9
             name_list[-1] = "顔が複数検出されませんでした"
         else:
             #顔が複数検出されたときの処理
             print('no face')
+            nameNumLabel = 9
             name_list[-1] = "顔が複数検出されました"
         
         nameValue_dict = dict(zip(name_list[0:5], predict_value))
