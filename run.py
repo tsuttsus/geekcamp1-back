@@ -99,7 +99,8 @@ def test_api():
                 cv2.putText(image,name,(x,y+height+20),cv2.FONT_HERSHEY_DUPLEX,1,(255,0,0),2)
         elif len(face_list) == 0:
             #顔が検出されたなかった時の処理
-            name_list[-1] = "顔が複数検出されませんでした"
+            name_list[-1] = "顔が複数検出されませんでした
+    "
         else:
             #顔が複数検出されたときの処理
             print('no face')
