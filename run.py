@@ -96,7 +96,7 @@ def test_api():
                 img = cv2.resize(image,(64,64))
                 img=np.expand_dims(img,axis=0)
                 name=""
-                model =load_model('models/model1903.h5')
+                model =load_model('models/model2-ss.h5')
                 print(model.predict(img))
                 nameNumLabel=np.argmax(model.predict(img))
                 predict_value = model.predict(img)
