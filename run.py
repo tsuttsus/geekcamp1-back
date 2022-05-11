@@ -6,13 +6,13 @@ from tensorflow.keras.models import  load_model
 from flask import Flask, render_template, request, redirect, abort, jsonify, make_response
 import base64
 import json
-# from flask_cors import CORS
+from flask_cors import CORS
 
 app = Flask(__name__)
-# CORS(
-#     app,
-#     supports_credentials=True
-# )
+CORS(
+    app,
+    supports_credentials=True
+)
 
 # @app.route('/')
 
@@ -82,8 +82,8 @@ def test_api():
         # 顔認識の実行
         face_list=cascade.detectMultiScale(image_gs, scaleFactor=1.1, minNeighbors=2,minSize=(64,64))
         name_list = ['寺田蘭世', '金村美玖', '宮田愛萌', '山口陽世', '与田祐希', '影山優佳', '森田ひかる', '守屋麗奈', '齋藤飛鳥', 'その他']
-        predict_value = [0]*5
-        nameNumLabel = 5
+        predict_value = [0]*9
+        nameNumLabel = 9
         #顔が１つ検出された時
         if len(face_list) == 1:
             for rect in face_list:
@@ -116,9 +116,9 @@ def test_api():
         json_data = json.dumps({"face": len(face_list), "name": name_list[nameNumLabel]}, ensure_ascii=False)
         # "value": predict_value[nameNumLabel], "name_value": nameValue_dict})
         response = make_response(json_data)
-        response.headers["Content-type"] = "application/json"
-        response.headers["Access-Control-Allow-Origin"] = "*"
-        response.headers["Access-Control-Request-Method"] = "GET,POST,HEAD"
+        # response.headers["Content-type"] = "application/json"
+        # response.headers["Access-Control-Allow-Origin"] = "*"
+        # response.headers["Access-Control-Request-Method"] = "GET,POST,HEAD"
         
         return response
 
