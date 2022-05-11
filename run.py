@@ -102,7 +102,7 @@ def test_api():
             print('no face')
         
         nameValue_dict = dict(zip(name_list[0:5], predict_value))
-        json_data = json.dumps({"face": len(face_list), "name": name_list[nameNumLabel]})
+        json_data = json.dumps({"face": len(face_list), "name": name_list[nameNumLabel]}, ensure_ascii=False)
         # "value": predict_value[nameNumLabel], "name_value": nameValue_dict})
         response = make_response(json_data)
         response.headers["Content-type"] = "application/json"
