@@ -46,37 +46,37 @@ def face_check():
                                         "percent": 0
                                     },
                                     {
-                                        "src": "https://whispering-hollows-31833.herokuapp.com/static/miyatamanamo.jpeg"
+                                        "src": "https://whispering-hollows-31833.herokuapp.com/static/miyatamanamo.jpeg",
                                         "name": "宮田愛萌",
                                         "percent": 0
                                     },
                                     {
-                                        "src": "https://whispering-hollows-31833.herokuapp.com/static/yamaguchiharuyo.jpeg"
+                                        "src": "https://whispering-hollows-31833.herokuapp.com/static/yamaguchiharuyo.jpeg",
                                         "name": "山口陽世",
                                         "percent": 0
                                     },
                                     {
-                                        "src": "https://whispering-hollows-31833.herokuapp.com/static/yodayuki.jpeg"
+                                        "src": "https://whispering-hollows-31833.herokuapp.com/static/yodayuki.jpeg",
                                         "name": "与田祐希",
                                         "percent": 0
                                     },
                                     {
-                                        "src": "https://whispering-hollows-31833.herokuapp.com/static/kageyamayuka.jpeg"
+                                        "src": "https://whispering-hollows-31833.herokuapp.com/static/kageyamayuka.jpeg",
                                         "name": "影山優佳",
                                         "percent": 0
                                     },
                                     {
-                                        "src": "https://whispering-hollows-31833.herokuapp.com/static/moritahikaru.jpeg"
+                                        "src": "https://whispering-hollows-31833.herokuapp.com/static/moritahikaru.jpeg",
                                         "name": "森田ひかる",
                                         "percent": 0
                                     },
                                     {
-                                        "src": "https://whispering-hollows-31833.herokuapp.com/static/moriyarena.jpeg"
+                                        "src": "https://whispering-hollows-31833.herokuapp.com/static/moriyarena.jpeg",
                                         "name": "守屋麗奈",
                                         "percent": 0
                                     },
                                     {
-                                        "src": "https://whispering-hollows-31833.herokuapp.com/static/saitouasuka.jpeg"
+                                        "src": "https://whispering-hollows-31833.herokuapp.com/static/saitouasuka.jpeg",
                                         "name": "齋藤飛鳥",
                                         "percent": 0
                                     }],
