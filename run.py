@@ -34,6 +34,7 @@ def face_check():
         cascade = cv2.CascadeClassifier("haarcascade_frontalface_alt.xml")
         # 顔認識の実行
         face_list=cascade.detectMultiScale(image_gs, scaleFactor=1.1, minNeighbors=2,minSize=(64,64))
+        error = ''
         if len(face_list) > 1:
             error = '顔が複数検出されました'
         elif len(face_list) == 0:
