@@ -91,10 +91,12 @@ def test_api():
     if request.method == 'POST':
         # json処理
         jsonform = request.json
+        print(jsonform)
         select_name=['寺田蘭世']
         for n in range(4):
             select_name.append(jsonform[n]["name"])
         select_prob=[]
+        jsonform.similarActors = jsonform
 
         image = cv2.imread('static/uploads/uploads.jpg')
         image_gs = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -137,7 +139,6 @@ def test_api():
         image = cv2.merge([r,g,b])
         cv2.imwrite('static/uploads/result.jpg', image)
         jsonform.src = "https://whispering-hollows-31833.herokuapp.com/static/moritahikaru.jpeg"
-
         nameValue_dict = dict(zip(name_list[0:5], predict_value))
         #json_data = json.dumps({"face": len(face_list), "name": name_list[nameNumLabel]}, ensure_ascii=False)
         #Jsonに確率を代入
