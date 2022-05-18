@@ -90,7 +90,7 @@ def face_check():
 def test_api():
     if request.method == 'POST':
         # json処理
-        jsonform = json.loads(json_data)
+        jsonform = request.json
         select_name=[]
         for n in range(5):
             select_name.append(jsonform["similarActors"][n]["name"])
