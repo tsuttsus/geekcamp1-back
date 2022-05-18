@@ -96,7 +96,8 @@ def test_api():
         for n in range(4):
             select_name.append(jsonform[n]["name"])
         select_prob=[]
-        jsonform.similarActors = json.dumps(jsonform)
+        jsonform = json.dumps(jsonform)
+        jsonform.similarActors = jsonform
 
         image = cv2.imread('static/uploads/uploads.jpg')
         image_gs = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
