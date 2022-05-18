@@ -14,61 +14,11 @@ CORS(
     supports_credentials=True
 )
 
-# @app.route('/')
-
-@app.route('/', methods=["GET", "POST"])
-def hello_world():
-    img_dir = "static/imgs/"
-    if request.method == 'GET':
-        img_path=None
-        return render_template('index.html')
-    elif request.method == 'POST':
-        #### POSTにより受け取った画像を読み込む
-        stream = request.files['img'].stream
-        img_array = np.asarray(bytearray(stream.read()), dtype=np.uint8)
-        image = cv2.imdecode(img_array, 1)
-        ### 画像処理
-        b,g,r = cv2.split(image)
-        image = cv2.merge([r,g,b])
-        image_gs = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        cascade = cv2.CascadeClassifier("haarcascade_frontalface_alt.xml")
-        # 顔認識の実行
-        face_list=cascade.detectMultiScale(image_gs, scaleFactor=1.1, minNeighbors=2,minSize=(64,64))
-        #顔が１つ以上検出された時
-        if len(face_list) > 0:
-            for rect in face_list:
-                x,y,width,height=rect
-                cv2.rectangle(image, tuple(rect[0:2]), tuple(rect[0:2]+rect[2:4]), (255, 0, 0), thickness=3)
-                img = image[rect[1]:rect[1]+rect[3],rect[0]:rect[0]+rect[2]]
-                if image.shape[0]<64:
-                    print("too small")
-                    continue
-                img = cv2.resize(image,(64,64))
-                img=np.expand_dims(img,axis=0)
-                name=""
-                model =load_model('ranze_model.h5')
-                print(model.predict(img))
-                nameNumLabel=np.argmax(model.predict(img))
-                if nameNumLabel== 0:
-                    name="Ranze"
-                cv2.putText(image,name,(x,y+height+20),cv2.FONT_HERSHEY_DUPLEX,1,(255,0,0),2)
-        #顔が検出されなかった時
-        else:
-            print("no face")
-        
-        #### 現在時刻を名前として「imgs/」に保存する
-        dt_now = datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")
-        img_path = img_dir + dt_now + ".jpg"
-        b,g,r = cv2.split(image)
-        image = cv2.merge([r,g,b])
-        cv2.imwrite(img_path, image)
-        result, dst_data = cv2.imencode('.jpg', image)
-        qr_b64str = base64.b64encode(dst_data).decode("utf-8")
-        qr_b64data = "data:image/png;base64,{}".format(qr_b64str)
-        return render_template('kekka.html',img = qr_b64data)
-
-@app.route('/test', methods=["POST"])
-def test_api():
+# 顔の個数チェック
+@app.route('/start', methods=["GET", "POST"])
+def face_check():
+    # パスの指定する
+    img_path = "static/uploads/uploads.jpg"
     if request.method == 'POST':
         #### POSTにより受け取った画像を読み込む
         stream = request.files['img'].stream
@@ -77,11 +27,80 @@ def test_api():
         ### 画像処理
         b,g,r = cv2.split(image)
         image = cv2.merge([r,g,b])
+        # 画像の保存
+        cv2.imwrite(img_path, image)
+        # グレイスケール
         image_gs = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         cascade = cv2.CascadeClassifier("haarcascade_frontalface_alt.xml")
         # 顔認識の実行
         face_list=cascade.detectMultiScale(image_gs, scaleFactor=1.1, minNeighbors=2,minSize=(64,64))
-        name_list = ['寺田蘭世', '金村美玖', '宮田愛萌', '山口陽世', '与田祐希', '影山優佳', '森田ひかる', '守屋麗奈', '齋藤飛鳥', 'その他']
+        if len(face_list) > 1:
+            error = '顔が複数検出されました'
+        elif len(face_list) == 0:
+            error = '顔が検出されませんでした'
+
+        json_data = json.dumps({"error": error, 
+                                "similarActors": [{
+                                        "src": "https://whispering-hollows-31833.herokuapp.com/static/kanemuramiku.jpg",
+                                        "name": "金村美玖",
+                                        "percent": 0
+                                    },
+                                    {
+                                        "src": "https://whispering-hollows-31833.herokuapp.com/static/miyatamanamo.jpg"
+                                        "name": "宮田愛萌",
+                                        "percent": 0
+                                    },
+                                    {
+                                        "src": "https://whispering-hollows-31833.herokuapp.com/static/yamaguchiharuyo.jpg"
+                                        "name": "山口陽世",
+                                        "percent": 0
+                                    },
+                                    {
+                                        "src": "https://whispering-hollows-31833.herokuapp.com/static/yodayuki.jpg"
+                                        "name": "与田祐希",
+                                        "percent": 0
+                                    },
+                                    {
+                                        "src": "https://whispering-hollows-31833.herokuapp.com/static/kageyamayuka.jpg"
+                                        "name": "影山優佳",
+                                        "percent": 0
+                                    },
+                                    {
+                                        "src": "https://whispering-hollows-31833.herokuapp.com/static/moritahikaru.jpg"
+                                        "name": "森田ひかる",
+                                        "percent": 0
+                                    },
+                                    {
+                                        "src": "https://whispering-hollows-31833.herokuapp.com/static/moriyarena.jpg"
+                                        "name": "守屋麗奈",
+                                        "percent": 0
+                                    },
+                                    {
+                                        "src": "https://whispering-hollows-31833.herokuapp.com/static/saitouasuka.jpg"
+                                        "name": "齋藤飛鳥",
+                                        "percent": 0
+                                    }],
+                                }, ensure_ascii=False)
+        response = make_response(json_data)
+        return response
+
+
+@app.route('/result', methods=["POST"])
+def test_api():
+    if request.method == 'POST':
+        # json処理
+        jsonform = json.loads(json_data)
+        select_name=[]
+        for n in range(5):
+            select_name.append(jsonform["similarActors"][n]["name"])
+        select_prob=[]
+
+        image = cv2.imread('static/uploads/uploads.jpg')
+        image_gs = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        cascade = cv2.CascadeClassifier("haarcascade_frontalface_alt.xml")
+        # 顔認識の実行
+        face_list=cascade.detectMultiScale(image_gs, scaleFactor=1.1, minNeighbors=2,minSize=(64,64))
+        name_list = ['寺田蘭世', '金村美玖', '宮田愛萌', '山口陽世', '与田祐希', '影山優佳', '森田ひかる', '守屋麗奈', '齋藤飛鳥']
         predict_value = [0]*9
         nameNumLabel = 9
         #顔が１つ検出された時
@@ -102,18 +121,29 @@ def test_api():
                 predict_value = model.predict(img)
                 predict_value = list(predict_value[0])
                 cv2.putText(image,name,(x,y+height+20),cv2.FONT_HERSHEY_DUPLEX,1,(255,0,0),2)
-        elif len(face_list) == 0:
-            #顔が検出されたなかった時の処理
-            nameNumLabel = 9
-            name_list[-1] = "顔が複数検出されませんでした"
-        else:
-            #顔が複数検出されたときの処理
-            print('no face')
-            nameNumLabel = 9
-            name_list[-1] = "顔が複数検出されました"
-        
+                #出力処理
+                for targ_name in select_name:
+                    targ_index=name_list.index(targ_name)
+                    select_prob.append(predict_value[targ_index])
+                #正規化処理
+                mins = min(select_prob) 
+                maxs=max(select_prob)
+                for i, x in enumerate(select_prob):
+                    select_prob[i] = (x-mins) / (maxs-mins)
+                
+        # カラーに戻して保存する
+        b,g,r = cv2.split(image)
+        image = cv2.merge([r,g,b])
+        cv2.imwrite('static/uploads/result.jpg', image)
+
         nameValue_dict = dict(zip(name_list[0:5], predict_value))
-        json_data = json.dumps({"face": len(face_list), "name": name_list[nameNumLabel]}, ensure_ascii=False)
+        #json_data = json.dumps({"face": len(face_list), "name": name_list[nameNumLabel]}, ensure_ascii=False)
+        #Jsonに確率を代入
+        if len(select_prob)>0:
+            for n in range(5):
+                jsonform["similarActors"][n]["percent"]=select_prob[n]
+        json_data = json.dumps(jsonform)
+        
         # "value": predict_value[nameNumLabel], "name_value": nameValue_dict})
         response = make_response(json_data)
         # response.headers["Content-type"] = "application/json"
@@ -124,10 +154,9 @@ def test_api():
 
 @app.route('/hello')
 def hello():
-    json_data = json.dumps({"hello": "world"})
-    response = make_response(json_data)
+    hello = "Hi! hello"
 
-    return response
+    return hello
 
 if __name__ == "__main__":
     app.run(debug=True)
