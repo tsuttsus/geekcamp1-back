@@ -86,9 +86,10 @@ def face_check():
         return response
 
 
-@app.route('/result', methods=["POST"])
+@app.route('/result', methods=["GET","POST"])
 def test_api():
     if request.method == 'POST':
+        return_json = {"src": "","similarActors":""}
         # json処理
         jsonform = request.json
         print(jsonform)
@@ -97,7 +98,7 @@ def test_api():
             select_name.append(jsonform[n]["name"])
         select_prob=[]
         jsonform = json.dumps(jsonform)
-        jsonform.similarActors = jsonform
+        return_json.similarActors = jsonform
 
         image = cv2.imread('static/uploads/uploads.jpg')
         image_gs = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -139,14 +140,14 @@ def test_api():
         b,g,r = cv2.split(image)
         image = cv2.merge([r,g,b])
         cv2.imwrite('static/uploads/result.jpg', image)
-        jsonform.src = "https://whispering-hollows-31833.herokuapp.com/static/moritahikaru.jpeg"
-        nameValue_dict = dict(zip(name_list[0:5], predict_value))
+        return_json.src = "https://whispering-hollows-31833.herokuapp.com/static/uploads/result.jpeg"
+        # nameValue_dict = dict(zip(name_list[0:5], predict_value))
         #json_data = json.dumps({"face": len(face_list), "name": name_list[nameNumLabel]}, ensure_ascii=False)
         #Jsonに確率を代入
         if len(select_prob)>0:
             for n in range(5):
-                jsonform["similarActors"][n]["percent"]=select_prob[n]
-        json_data = json.dumps(jsonform)
+                return_json["similarActors"][n]["percent"]=select_prob[n]
+        json_data = json.dumps(return_json)
         
         # "value": predict_value[nameNumLabel], "name_value": nameValue_dict})
         response = make_response(json_data)
